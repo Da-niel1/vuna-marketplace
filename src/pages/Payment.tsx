@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { ArrowLeft, CreditCard, Smartphone, Building, Shield, CheckCircle, AlertCircle } from 'lucide-react';
+import { ArrowLeft, CreditCard, Smartphone, Building, Shield, CheckCircle, AlertCircle, User } from 'lucide-react';
 import { mockItems } from '../data/mockData';
 import { formatPrice } from '../utils/currency';
 import { useAuth } from '../contexts/AuthContext';
@@ -10,7 +10,7 @@ const Payment: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
   
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'transfer' | 'ussd'>('card');
+  const [paymentMethod, setPaymentMethod] = useState<'card' | 'transfer' | 'ussd'>('transfer');
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentComplete, setPaymentComplete] = useState(false);
   const [formData, setFormData] = useState({
@@ -23,6 +23,13 @@ const Payment: React.FC = () => {
   });
 
   const item = mockItems.find(item => item.id === itemId);
+
+  // Mock seller bank details (in real app, this would come from seller's profile)
+  const sellerBankDetails = {
+    bankName: 'Access Bank',
+    accountNumber: '0123456789',
+    accountName: item?.seller.name || 'Seller Name'
+  };
 
   if (!isAuthenticated) {
     return (
@@ -80,36 +87,48 @@ const Payment: React.FC = () => {
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="h-8 w-8 text-green-600" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">Payment Successful!</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">Payment Sent Successfully!</h1>
           <p className="text-lg text-gray-600 mb-8">
-            Your payment for <strong>{item.title}</strong> has been processed successfully.
+            Your payment for <strong>{item.title}</strong> has been sent directly to {item.seller.name}.
           </p>
           
           <div className="bg-gray-50 rounded-lg p-6 mb-8">
             <div className="flex justify-between items-center mb-4">
-              <span className="text-gray-600">Amount Paid:</span>
+              <span className="text-gray-600">Amount Sent:</span>
               <span className="text-2xl font-bold text-green-600">{formatPrice(item.price)}</span>
             </div>
             <div className="flex justify-between items-center mb-4">
               <span className="text-gray-600">Transaction ID:</span>
               <span className="font-mono text-sm">TXN-{Date.now()}</span>
             </div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-600">Seller:</span>
+            <div className="flex justify-between items-center mb-4">
+              <span className="text-gray-600">Paid to:</span>
               <span className="font-medium">{item.seller.name}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-600">Payment Method:</span>
+              <span className="font-medium capitalize">{paymentMethod}</span>
             </div>
           </div>
 
           <div className="space-y-4">
-            <p className="text-gray-600">
-              The seller has been notified of your purchase. You can now coordinate pickup details through messages.
-            </p>
+            <div className="bg-blue-50 rounded-lg p-4 mb-6">
+              <div className="flex items-start space-x-2">
+                <User className="h-5 w-5 text-blue-600 mt-0.5" />
+                <div className="text-left">
+                  <p className="text-sm font-medium text-blue-900">Next Steps</p>
+                  <p className="text-sm text-blue-700">
+                    Contact {item.seller.name} to arrange pickup or delivery. The seller has been notified of your payment.
+                  </p>
+                </div>
+              </div>
+            </div>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 to="/messages"
                 className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
               >
-                Message Seller
+                Message {item.seller.name}
               </Link>
               <Link
                 to="/browse"
@@ -135,13 +154,14 @@ const Payment: React.FC = () => {
           <ArrowLeft className="h-5 w-5" />
           <span>Back</span>
         </button>
-        <h1 className="text-3xl font-bold text-gray-900">Complete Your Purchase</h1>
+        <h1 className="text-3xl font-bold text-gray-900">Pay Seller Directly</h1>
+        <p className="text-gray-600 mt-2">Send payment directly to {item.seller.name}</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Item Summary */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Order Summary</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-6">Purchase Summary</h2>
           
           <div className="flex space-x-4 mb-6">
             <img
@@ -156,32 +176,59 @@ const Payment: React.FC = () => {
             </div>
           </div>
 
-          <div className="border-t border-gray-200 pt-4 space-y-3">
-            <div className="flex justify-between">
-              <span className="text-gray-600">Item Price</span>
-              <span className="font-medium">{formatPrice(item.price)}</span>
+          {/* Seller Information */}
+          <div className="border-t border-gray-200 pt-4 mb-6">
+            <h3 className="font-semibold text-gray-900 mb-3">Seller Details</h3>
+            <div className="flex items-center space-x-3 mb-4">
+              <img
+                src={item.seller.avatar || `https://ui-avatars.com/api/?name=${item.seller.name}&background=3b82f6&color=fff`}
+                alt={item.seller.name}
+                className="w-12 h-12 rounded-full"
+              />
+              <div>
+                <p className="font-medium text-gray-900">{item.seller.name}</p>
+                <div className="flex items-center space-x-1">
+                  <span className="text-yellow-400">★</span>
+                  <span className="text-sm text-gray-600">{item.seller.rating} rating</span>
+                </div>
+              </div>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-600">Service Fee</span>
-              <span className="font-medium">{formatPrice(item.price * 0.02)}</span>
-            </div>
-            <div className="border-t border-gray-200 pt-3">
-              <div className="flex justify-between">
-                <span className="text-lg font-semibold text-gray-900">Total</span>
-                <span className="text-lg font-bold text-gray-900">
-                  {formatPrice(item.price + (item.price * 0.02))}
-                </span>
+            
+            {/* Seller Bank Details */}
+            <div className="bg-blue-50 rounded-lg p-4">
+              <h4 className="font-medium text-blue-900 mb-2">Payment will be sent to:</h4>
+              <div className="space-y-1 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-blue-700">Bank:</span>
+                  <span className="font-medium text-blue-900">{sellerBankDetails.bankName}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-blue-700">Account:</span>
+                  <span className="font-medium text-blue-900">{sellerBankDetails.accountNumber}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-blue-700">Name:</span>
+                  <span className="font-medium text-blue-900">{sellerBankDetails.accountName}</span>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+          <div className="border-t border-gray-200 pt-4">
+            <div className="flex justify-between items-center">
+              <span className="text-2xl font-bold text-gray-900">Total Amount</span>
+              <span className="text-2xl font-bold text-green-600">{formatPrice(item.price)}</span>
+            </div>
+            <p className="text-sm text-gray-500 mt-1">No additional fees - pay exactly what's listed</p>
+          </div>
+
+          <div className="mt-6 p-4 bg-green-50 rounded-lg">
             <div className="flex items-start space-x-2">
-              <Shield className="h-5 w-5 text-blue-600 mt-0.5" />
+              <Shield className="h-5 w-5 text-green-600 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-blue-900">Secure Payment</p>
-                <p className="text-sm text-blue-700">
-                  Your payment is protected by our secure payment system.
+                <p className="text-sm font-medium text-green-900">Direct Payment</p>
+                <p className="text-sm text-green-700">
+                  Payment goes directly to the seller. Coordinate pickup after payment.
                 </p>
               </div>
             </div>
@@ -190,21 +237,10 @@ const Payment: React.FC = () => {
 
         {/* Payment Form */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Payment Method</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-6">Choose Payment Method</h2>
 
           {/* Payment Method Selection */}
           <div className="grid grid-cols-3 gap-4 mb-6">
-            <button
-              onClick={() => setPaymentMethod('card')}
-              className={`p-4 border rounded-lg text-center transition-colors ${
-                paymentMethod === 'card'
-                  ? 'border-blue-500 bg-blue-50 text-blue-700'
-                  : 'border-gray-200 hover:border-gray-300'
-              }`}
-            >
-              <CreditCard className="h-6 w-6 mx-auto mb-2" />
-              <span className="text-sm font-medium">Card</span>
-            </button>
             <button
               onClick={() => setPaymentMethod('transfer')}
               className={`p-4 border rounded-lg text-center transition-colors ${
@@ -227,11 +263,94 @@ const Payment: React.FC = () => {
               <Smartphone className="h-6 w-6 mx-auto mb-2" />
               <span className="text-sm font-medium">USSD</span>
             </button>
+            <button
+              onClick={() => setPaymentMethod('card')}
+              className={`p-4 border rounded-lg text-center transition-colors ${
+                paymentMethod === 'card'
+                  ? 'border-blue-500 bg-blue-50 text-blue-700'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <CreditCard className="h-6 w-6 mx-auto mb-2" />
+              <span className="text-sm font-medium">Card</span>
+            </button>
           </div>
 
           <form onSubmit={handlePayment} className="space-y-6">
+            {paymentMethod === 'transfer' && (
+              <div className="text-center py-8">
+                <Building className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Bank Transfer</h3>
+                <p className="text-gray-600 mb-4">
+                  Transfer {formatPrice(item.price)} to {item.seller.name}'s account:
+                </p>
+                <div className="bg-gray-50 rounded-lg p-4 text-left">
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Bank:</span>
+                      <span className="font-medium">{sellerBankDetails.bankName}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Account Number:</span>
+                      <span className="font-medium">{sellerBankDetails.accountNumber}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Account Name:</span>
+                      <span className="font-medium">{sellerBankDetails.accountName}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Amount:</span>
+                      <span className="font-bold text-green-600">{formatPrice(item.price)}</span>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-500 mt-4">
+                  Use "{item.title.substring(0, 20)}..." as your transfer reference
+                </p>
+              </div>
+            )}
+
+            {paymentMethod === 'ussd' && (
+              <div className="text-center py-8">
+                <Smartphone className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">USSD Payment</h3>
+                <p className="text-gray-600 mb-4">
+                  Use these USSD codes to transfer {formatPrice(item.price)} to {item.seller.name}:
+                </p>
+                <div className="space-y-3">
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <span className="font-medium">GTBank: </span>
+                    <span className="font-mono">*737*1*{item.price}*{sellerBankDetails.accountNumber}#</span>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <span className="font-medium">Access Bank: </span>
+                    <span className="font-mono">*901*1*{item.price}*{sellerBankDetails.accountNumber}#</span>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <span className="font-medium">First Bank: </span>
+                    <span className="font-mono">*894*1*{item.price}*{sellerBankDetails.accountNumber}#</span>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-500 mt-4">
+                  Follow the prompts on your phone to complete the transfer
+                </p>
+              </div>
+            )}
+
             {paymentMethod === 'card' && (
               <>
+                <div className="bg-yellow-50 rounded-lg p-4 mb-4">
+                  <div className="flex items-start space-x-2">
+                    <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-yellow-900">Card Payment</p>
+                      <p className="text-sm text-yellow-700">
+                        Card payment will be processed and sent directly to {item.seller.name}'s account.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Card Number
@@ -295,59 +414,9 @@ const Payment: React.FC = () => {
               </>
             )}
 
-            {paymentMethod === 'transfer' && (
-              <div className="text-center py-8">
-                <Building className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Bank Transfer</h3>
-                <p className="text-gray-600 mb-4">
-                  Transfer {formatPrice(item.price + (item.price * 0.02))} to the account below:
-                </p>
-                <div className="bg-gray-50 rounded-lg p-4 text-left">
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Bank:</span>
-                      <span className="font-medium">First Bank Nigeria</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Account Number:</span>
-                      <span className="font-medium">1234567890</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Account Name:</span>
-                      <span className="font-medium">UniMarket Escrow</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {paymentMethod === 'ussd' && (
-              <div className="text-center py-8">
-                <Smartphone className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">USSD Payment</h3>
-                <p className="text-gray-600 mb-4">
-                  Dial the USSD code for your bank to complete payment:
-                </p>
-                <div className="space-y-3">
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <span className="font-medium">GTBank: </span>
-                    <span className="font-mono">*737*1*{item.price + (item.price * 0.02)}#</span>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <span className="font-medium">Access Bank: </span>
-                    <span className="font-mono">*901*1*{item.price + (item.price * 0.02)}#</span>
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-3">
-                    <span className="font-medium">First Bank: </span>
-                    <span className="font-mono">*894*1*{item.price + (item.price * 0.02)}#</span>
-                  </div>
-                </div>
-              </div>
-            )}
-
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email Address
+                Your Email Address
               </label>
               <input
                 type="email"
@@ -363,7 +432,7 @@ const Payment: React.FC = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Phone Number
+                Your Phone Number
               </label>
               <input
                 type="tel"
@@ -389,20 +458,20 @@ const Payment: React.FC = () => {
                   </>
                 ) : (
                   <>
-                    <span>Pay {formatPrice(item.price + (item.price * 0.02))}</span>
+                    <span>Send {formatPrice(item.price)} to {item.seller.name}</span>
                   </>
                 )}
               </button>
             </div>
           </form>
 
-          <div className="mt-6 p-4 bg-yellow-50 rounded-lg">
+          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
             <div className="flex items-start space-x-2">
-              <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
+              <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-yellow-900">Important Note</p>
-                <p className="text-sm text-yellow-700">
-                  Payment will be held in escrow until you confirm receipt of the item.
+                <p className="text-sm font-medium text-blue-900">Direct Payment Notice</p>
+                <p className="text-sm text-blue-700">
+                  You are paying directly to the seller. Please coordinate pickup/delivery through messages after payment.
                 </p>
               </div>
             </div>
