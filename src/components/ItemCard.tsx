@@ -1,5 +1,7 @@
 import React from 'react';
-import { Heart, MessageCircle, Star, MapPin, Clock, Edit, Trash2 } from 'lucide-react';
+import { Heart, MessageCircle, Star, MapPin, Clock, Edit, Trash2, ShoppingCart } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { formatPrice } from '../utils/currency';
 
 interface Item {
   id: string;
@@ -28,13 +30,6 @@ interface ItemCardProps {
 }
 
 const ItemCard: React.FC<ItemCardProps> = ({ item, viewMode = 'grid', showActions = false }) => {
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(price);
-  };
-
   const formatTime = (date: Date) => {
     const now = new Date();
     const diff = now.getTime() - date.getTime();
@@ -131,6 +126,12 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, viewMode = 'grid', showAction
                     <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors">
                       <MessageCircle className="h-4 w-4" />
                     </button>
+                    <Link
+                      to={`/payment/${item.id}`}
+                      className="p-2 text-green-600 hover:bg-green-50 rounded-md transition-colors"
+                    >
+                      <ShoppingCart className="h-4 w-4" />
+                    </Link>
                   </div>
                 )}
               </div>
@@ -223,10 +224,19 @@ const ItemCard: React.FC<ItemCardProps> = ({ item, viewMode = 'grid', showAction
           </div>
           
           {!showActions && (
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium flex items-center space-x-1">
-              <MessageCircle className="h-4 w-4" />
-              <span>Message</span>
-            </button>
+            <div className="flex space-x-2">
+              <button className="bg-blue-600 text-white px-3 py-1.5 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium flex items-center space-x-1">
+                <MessageCircle className="h-3 w-3" />
+                <span>Message</span>
+              </button>
+              <Link
+                to={`/payment/${item.id}`}
+                className="bg-green-600 text-white px-3 py-1.5 rounded-md hover:bg-green-700 transition-colors text-sm font-medium flex items-center space-x-1"
+              >
+                <ShoppingCart className="h-3 w-3" />
+                <span>Buy</span>
+              </Link>
+            </div>
           )}
         </div>
       </div>

@@ -23,7 +23,7 @@ export const mockItems: Item[] = [
     id: '1',
     title: 'Introduction to Psychology Textbook - 12th Edition',
     description: 'Excellent condition psychology textbook with minimal highlighting. Perfect for PSY 101 students. All pages intact, no water damage.',
-    price: 89.99,
+    price: 35000,
     images: [
       'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&cs=tinysrgb&w=600',
       'https://images.pexels.com/photos/4792495/pexels-photo-4792495.jpeg?auto=compress&cs=tinysrgb&w=600'
@@ -45,7 +45,7 @@ export const mockItems: Item[] = [
     id: '2',
     title: 'MacBook Pro 13-inch (2022) - Space Gray',
     description: 'Barely used MacBook Pro with M2 chip, 8GB RAM, 256GB SSD. Comes with original charger and box. Perfect for students.',
-    price: 1299.00,
+    price: 520000,
     images: [
       'https://images.pexels.com/photos/18105/pexels-photo.jpg?auto=compress&cs=tinysrgb&w=600',
       'https://images.pexels.com/photos/5240543/pexels-photo-5240543.jpeg?auto=compress&cs=tinysrgb&w=600'
@@ -67,7 +67,7 @@ export const mockItems: Item[] = [
     id: '3',
     title: 'IKEA Study Desk with Chair - White',
     description: 'Compact study desk perfect for dorm rooms. Includes matching chair. Some minor wear but very functional.',
-    price: 75.00,
+    price: 30000,
     images: [
       'https://images.pexels.com/photos/6621329/pexels-photo-6621329.jpeg?auto=compress&cs=tinysrgb&w=600',
       'https://images.pexels.com/photos/1957478/pexels-photo-1957478.jpeg?auto=compress&cs=tinysrgb&w=600'
@@ -89,7 +89,7 @@ export const mockItems: Item[] = [
     id: '4',
     title: 'Nike Air Max 270 - Size 10 (Men\'s)',
     description: 'Gently worn Nike sneakers, still in great condition. Perfect for campus walks and workouts.',
-    price: 95.00,
+    price: 38000,
     images: [
       'https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&cs=tinysrgb&w=600',
       'https://images.pexels.com/photos/1598505/pexels-photo-1598505.jpeg?auto=compress&cs=tinysrgb&w=600'
@@ -111,7 +111,7 @@ export const mockItems: Item[] = [
     id: '5',
     title: 'Calculus: Early Transcendentals - 8th Edition',
     description: 'Essential math textbook for CALC I & II. Good condition with some highlighting in first few chapters.',
-    price: 120.00,
+    price: 48000,
     images: [
       'https://images.pexels.com/photos/4792491/pexels-photo-4792491.jpeg?auto=compress&cs=tinysrgb&w=600'
     ],
@@ -132,7 +132,7 @@ export const mockItems: Item[] = [
     id: '6',
     title: 'Mini Fridge - Perfect for Dorm Room',
     description: 'Compact refrigerator, great for keeping drinks and snacks cold. Clean and works perfectly.',
-    price: 85.00,
+    price: 34000,
     images: [
       'https://images.pexels.com/photos/2343465/pexels-photo-2343465.jpeg?auto=compress&cs=tinysrgb&w=600'
     ],
@@ -153,7 +153,7 @@ export const mockItems: Item[] = [
     id: '7',
     title: 'iPad Pro 11-inch with Apple Pencil',
     description: 'Perfect for note-taking and digital art. Includes screen protector and case. Excellent for students.',
-    price: 650.00,
+    price: 260000,
     images: [
       'https://images.pexels.com/photos/1334597/pexels-photo-1334597.jpeg?auto=compress&cs=tinysrgb&w=600',
       'https://images.pexels.com/photos/4068314/pexels-photo-4068314.jpeg?auto=compress&cs=tinysrgb&w=600'
@@ -175,7 +175,7 @@ export const mockItems: Item[] = [
     id: '8',
     title: 'Champion Hoodie - University Logo (Large)',
     description: 'Official university hoodie in excellent condition. Warm and comfortable, perfect for campus wear.',
-    price: 35.00,
+    price: 14000,
     images: [
       'https://images.pexels.com/photos/8532616/pexels-photo-8532616.jpeg?auto=compress&cs=tinysrgb&w=600'
     ],

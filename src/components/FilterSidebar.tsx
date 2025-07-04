@@ -32,11 +32,11 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
 
   const priceRanges = [
     { id: 'all', name: 'All Prices' },
-    { id: '0-25', name: 'Under $25' },
-    { id: '25-50', name: '$25 - $50' },
-    { id: '50-100', name: '$50 - $100' },
-    { id: '100-200', name: '$100 - $200' },
-    { id: '200+', name: '$200+' }
+    { id: '0-10000', name: 'Under ₦10,000' },
+    { id: '10000-25000', name: '₦10,000 - ₦25,000' },
+    { id: '25000-50000', name: '₦25,000 - ₦50,000' },
+    { id: '50000-100000', name: '₦50,000 - ₦100,000' },
+    { id: '100000+', name: '₦100,000+' }
   ];
 
   const conditions = [

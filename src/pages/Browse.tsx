@@ -36,20 +36,20 @@ const Browse: React.FC = () => {
     if (filters.priceRange !== 'all') {
       const price = item.price;
       switch (filters.priceRange) {
-        case '0-25':
-          matchesPrice = price < 25;
+        case '0-10000':
+          matchesPrice = price < 10000;
           break;
-        case '25-50':
-          matchesPrice = price >= 25 && price < 50;
+        case '10000-25000':
+          matchesPrice = price >= 10000 && price < 25000;
           break;
-        case '50-100':
-          matchesPrice = price >= 50 && price < 100;
+        case '25000-50000':
+          matchesPrice = price >= 25000 && price < 50000;
           break;
-        case '100-200':
-          matchesPrice = price >= 100 && price < 200;
+        case '50000-100000':
+          matchesPrice = price >= 50000 && price < 100000;
           break;
-        case '200+':
-          matchesPrice = price >= 200;
+        case '100000+':
+          matchesPrice = price >= 100000;
           break;
       }
     }

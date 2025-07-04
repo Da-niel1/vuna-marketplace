@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { X, Heart, MessageCircle, Star, MapPin, Clock, Share2, Flag, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, Heart, MessageCircle, Star, MapPin, Clock, Share2, Flag, ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Item } from '../data/mockData';
+import { formatPrice } from '../utils/currency';
 
 interface ItemDetailModalProps {
   item: Item;
@@ -14,13 +16,6 @@ const ItemDetailModal: React.FC<ItemDetailModalProps> = ({ item, isOpen, onClose
   const [message, setMessage] = useState('');
 
   if (!isOpen) return null;
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(price);
-  };
 
   const formatTime = (date: Date) => {
     const now = new Date();
@@ -214,9 +209,13 @@ const ItemDetailModal: React.FC<ItemDetailModalProps> = ({ item, isOpen, onClose
                 <MessageCircle className="h-5 w-5" />
                 <span>Message Seller</span>
               </button>
-              <button className="w-full bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors font-semibold">
-                Make Offer
-              </button>
+              <Link
+                to={`/payment/${item.id}`}
+                className="w-full bg-green-600 text-white py-3 px-6 rounded-lg hover:bg-green-700 transition-colors font-semibold flex items-center justify-center space-x-2"
+              >
+                <ShoppingCart className="h-5 w-5" />
+                <span>Buy Now - {formatPrice(item.price)}</span>
+              </Link>
             </div>
           </div>
         </div>
